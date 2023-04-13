@@ -3,11 +3,7 @@ import React from "react";
 const BookMark = ({ id, bookmark, onFavorite }) => {
   return (
     <button onClick={() => onFavorite(id)} className="btn btn-light">
-      {bookmark ? (
-        <i class="bi bi-bookmark-fill"></i>
-      ) : (
-        <i class="bi bi-bookmark"></i>
-      )}
+      <i class={`bi bi-bookmark${bookmark ? "-fill" : ""}`}></i>
     </button>
   );
 };

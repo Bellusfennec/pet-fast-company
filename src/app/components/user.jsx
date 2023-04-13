@@ -1,10 +1,10 @@
 import React from "react";
 import Qualitie from "./qualitie";
-import BookMark from "./bookmark";
+import BookMark from "./bookMark";
 
 const User = ({ user, onDeleteUser, onFavorite }) => {
   return (
-    <tr key={user._id}>
+    <tr>
       <td>{user.name}</td>
       <td>
         {user.qualities.map((quality) => (
