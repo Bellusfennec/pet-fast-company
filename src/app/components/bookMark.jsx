@@ -1,8 +1,8 @@
 import React from "react";
 
-const BookMark = ({ _id, bookmark, onFavorite }) => {
+const BookMark = ({ id, bookmark, onFavorite }) => {
   return (
-    <div onClick={() => onFavorite(_id)}>
+    <div onClick={() => onFavorite(id)}>
       {bookmark ? "отмечен" : "не отмечен"}
     </div>
   );
