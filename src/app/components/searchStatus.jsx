@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 
 const SearchStatus = ({ length }) => {
   const handlePhrase = (number) => {
@@ -13,5 +14,7 @@ const SearchStatus = ({ length }) => {
     </span>
   );
 };
-
+SearchStatus.propTypes = {
+  length: PropTypes.number.isRequired
+};
 export default SearchStatus;

@@ -1,6 +1,7 @@
 import React from "react";
 import Qualitie from "./qualitie";
 import BookMark from "./bookMark";
+import PropTypes from "prop-types";
 
 const User = ({ user, onDeleteUser, onFavorite }) => {
   return (
@@ -31,6 +32,11 @@ const User = ({ user, onDeleteUser, onFavorite }) => {
       </td>
     </tr>
   );
+};
+User.propTypes = {
+  user: PropTypes.object.isRequired,
+  onDeleteUser: PropTypes.func.isRequired,
+  onFavorite: PropTypes.func.isRequired
 };
 
 export default User;
