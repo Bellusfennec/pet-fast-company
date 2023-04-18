@@ -22,7 +22,7 @@ const App = () => {
   if (!users?.length) {
     return (
       <h2>
-        <SearchStatus length="0" />
+        <SearchStatus length={0} />
       </h2>
     );
   }

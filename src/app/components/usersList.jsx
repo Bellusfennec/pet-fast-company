@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import User from "./user";
 import Pagination from "./pagination";
 import { paginate } from "../utils/paginate";
@@ -11,8 +11,13 @@ const UsersList = ({ users, onDeleteUser, onFavorite }) => {
   const handlePageChange = (pageIndex) => {
     setCurrentPage(pageIndex);
   };
-
   const userCrop = paginate(users, currentPage, pageSize);
+
+  useEffect(() => {
+    if (users.length > pageSize && userCrop.length === 0) {
+      setCurrentPage(currentPage - 1);
+    }
+  }, [userCrop]);
 
   return (
     <>
