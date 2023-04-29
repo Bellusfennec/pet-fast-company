@@ -9,22 +9,25 @@ function GroupList({
   valueProperty,
   contentProperty
 }) {
-  if (!Array.isArray(items)) {
-    items = Object.keys(items).map((key) => ({ key, ...items[key] }));
-  }
+  items = !Array.isArray(items)
+    ? Object.keys(items).map((key) => ({ key, ...items[key] }))
+    : items;
 
   return (
     <ul className="list-group">
-      {Object.keys(items).map((item) => (
+      {items.map((item) => (
         <li
-          key={items[item][valueProperty]}
-          onClick={() => onItemSelect(items[item])}
+          key={item[valueProperty]}
+          onClick={() => onItemSelect(item)}
           role="button"
           className={
-            "list-group-item" + (items[item] === selectedItem ? " active" : "")
+            "list-group-item" +
+            (item[valueProperty] === selectedItem?.[valueProperty]
+              ? " active"
+              : "")
           }
         >
-          {items[item][contentProperty]}
+          {item[contentProperty]}
         </li>
       ))}
     </ul>
