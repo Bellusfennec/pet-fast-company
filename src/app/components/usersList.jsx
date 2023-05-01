@@ -1,24 +1,48 @@
 /* eslint-disable indent */
 import React, { useEffect, useState } from "react";
-import User from "./user";
 import Pagination from "./pagination";
 import { paginate, totalPage } from "../utils/paginate";
-import PropTypes from "prop-types";
 import GroupList from "./groupList";
 import api from "../api";
 import SearchStatus from "./searchStatus";
+import UsersTable from "./usersTable";
+import _ from "lodash";
 
-const UsersList = ({ users, onDeleteUser, onFavorite }) => {
-  const pageSize = 2;
+const UsersList = () => {
+  const pageSize = 8;
+  const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [professions, setProfessions] = useState();
   const [selectedProfession, setSelectedProfession] = useState();
+  const [sortBy, setSortBy] = useState({ path: "name", order: "asc" });
+  const [users, setUsers] = useState();
+
+  useEffect(() => {
+    setLoading(true);
+    api.users
+      .fetchAll()
+      .then((data) => setUsers(data))
+      .finally(() => setLoading(false));
+  }, []);
+
+  const handleDelete = (userId) => {
+    setUsers((prev) => prev.filter((user) => user._id !== userId));
+  };
+
+  const handleToggleBookMark = (id) => {
+    setUsers((prevState) =>
+      prevState.map((item) =>
+        item._id === id ? { ...item, bookmark: !item.bookmark } : item
+      )
+    );
+  };
 
   const filtredUsers = selectedProfession
     ? users.filter((user) => user.profession._id === selectedProfession._id)
     : users;
   const countUsers = filtredUsers?.length ? filtredUsers.length : 0;
-  const userCrop = paginate(filtredUsers, currentPage, pageSize);
+  const sortedUsers = _.orderBy(filtredUsers, [sortBy.path], [sortBy.order]);
+  const userCrop = paginate(sortedUsers, currentPage, pageSize);
   const pageCount = totalPage(countUsers, pageSize);
 
   useEffect(() => {
@@ -49,6 +73,9 @@ const UsersList = ({ users, onDeleteUser, onFavorite }) => {
   const handleResetFilter = () => {
     setSelectedProfession();
   };
+  const handleSort = (item) => {
+    setSortBy(item);
+  };
 
   return (
     <>
@@ -71,33 +98,21 @@ const UsersList = ({ users, onDeleteUser, onFavorite }) => {
 
         <div className="d-flex flex-column w-100">
           <h2>
-            <SearchStatus length={countUsers} profession={selectedProfession} />
+            <SearchStatus
+              length={countUsers}
+              profession={selectedProfession}
+              loading={loading}
+            />
           </h2>
           {userCrop.length > 0 && (
             <>
-              <table className="table">
-                <thead>
-                  <tr>
-                    <th scope="col">Имя</th>
-                    <th scope="col">Качества</th>
-                    <th scope="col">Профессия</th>
-                    <th scope="col">Встретился, раз</th>
-                    <th scope="col">Оценка</th>
-                    <th scope="col">Избранное</th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {userCrop.map((user) => (
-                    <User
-                      key={user._id}
-                      user={user}
-                      onDeleteUser={onDeleteUser}
-                      onFavorite={onFavorite}
-                    />
-                  ))}
-                </tbody>
-              </table>
+              <UsersTable
+                users={userCrop}
+                onDeleteUser={handleDelete}
+                onBookMark={handleToggleBookMark}
+                onSort={handleSort}
+                selectedSort={sortBy}
+              />
               <div className="d-flex justify-content-center">
                 <Pagination
                   itemsCount={countUsers}
@@ -112,10 +127,5 @@ const UsersList = ({ users, onDeleteUser, onFavorite }) => {
       </div>
     </>
   );
-};
-UsersList.propTypes = {
-  users: PropTypes.array.isRequired,
-  onDeleteUser: PropTypes.func.isRequired,
-  onFavorite: PropTypes.func.isRequired
 };
 export default UsersList;

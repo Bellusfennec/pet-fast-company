@@ -1,9 +1,10 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-const SearchStatus = ({ length, profession }) => {
+const SearchStatus = ({ length, profession, loading }) => {
   const human = profession ? profession.name.toLowerCase() : "человек";
   const handlePhrase = (number) => {
+    if (loading) return `Ищем людей...`;
     if (!number && profession) return `Никто из ${human}ов с тобой не тусанёт`;
     if (!number) return "Никто с тобой не тусанёт";
     if (number === 1) return `${number} ${human} тусанёт с тобой сегодня`;
@@ -18,6 +19,7 @@ const SearchStatus = ({ length, profession }) => {
 };
 SearchStatus.propTypes = {
   length: PropTypes.number.isRequired,
-  profession: PropTypes.object
+  profession: PropTypes.object,
+  loading: PropTypes.bool
 };
 export default SearchStatus;
