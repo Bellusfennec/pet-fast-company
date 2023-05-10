@@ -10,13 +10,12 @@ import NavBar from "./components/navBar";
 const App = () => {
   return (
     <>
+      <NavBar />
       <Switch>
         <Route exact path="/" component={Main} />
         <Route path="/login" component={Login} />
-        <Route path="/users" component={Users} />
+        <Route path="/users/:userId?" component={Users} />
       </Switch>
-      <NavBar />
-      <UsersList />
     </>
   );
 };
