@@ -1,10 +1,10 @@
 /* eslint-disable multiline-ternary */
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import API from "../api";
-import QualitiesList from "./qualitiesList";
+import API from "../../../api";
+import Qualities from "../../ui/qualities";
 
-const User = () => {
+const UserPage = () => {
   const history = useHistory();
   const { userId } = useParams();
   const [loading, setLoading] = useState(true);
@@ -25,7 +25,7 @@ const User = () => {
         <>
           <h1>{user.name}</h1>
           <h2>Профессия: {user.profession.name}</h2>
-          <QualitiesList qualities={user.qualities} />
+          <Qualities qualities={user.qualities} />
           <p>completedMeetings: {user.completedMeetings}</p>
           <h2>Rate: {user.rate}</h2>
           <button onClick={() => history.push("/users")}>
@@ -39,4 +39,4 @@ const User = () => {
   );
 };
 
-export default User;
+export default UserPage;

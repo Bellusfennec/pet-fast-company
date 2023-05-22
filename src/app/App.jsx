@@ -1,11 +1,10 @@
 /* eslint-disable no-unused-vars */
 import React from "react";
-import UsersList from "./components/usersList";
-import { Switch, Route } from "react-router-dom";
+import { Route, Switch } from "react-router-dom";
+import NavBar from "./components/ui/navBar";
+import Login from "./layouts/login";
 import Main from "./layouts/main";
 import Users from "./layouts/users";
-import Login from "./layouts/login";
-import NavBar from "./components/navBar";
 
 const App = () => {
   return (

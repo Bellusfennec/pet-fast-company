@@ -1,14 +1,14 @@
 /* eslint-disable indent */
 import React, { useEffect, useState } from "react";
-import Pagination from "./pagination";
-import { paginate, totalPage } from "../utils/paginate";
-import GroupList from "./groupList";
-import api from "../api";
-import SearchStatus from "./searchStatus";
-import UsersTable from "./usersTable";
+import Pagination from "../../common/pagination";
+import { paginate, totalPage } from "../../../utils/paginate";
+import GroupList from "../../common/groupList";
+import api from "../../../api";
+import SearchStatus from "../../ui/searchStatus";
+import UsersTable from "../../ui/usersTable";
 import _ from "lodash";
 
-const UsersList = () => {
+const UsersListPage = () => {
   const pageSize = 8;
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -39,10 +39,10 @@ const UsersList = () => {
   };
   /* Поиск */
   const searchRegExp = new RegExp(search);
-  const searchResult = users.filter((user) =>
+  const searchResult = users?.filter((user) =>
     searchRegExp.test(user.name.toLowerCase())
   );
-  const searchUsers = searchResult.length > 0 ? searchResult : users;
+  const searchUsers = searchResult?.length > 0 ? searchResult : users;
   /* Отфильтрованные по профессии */
   const filtredUsers = selectedProfession
     ? searchUsers.filter(
@@ -150,4 +150,4 @@ const UsersList = () => {
     </>
   );
 };
-export default UsersList;
+export default UsersListPage;
