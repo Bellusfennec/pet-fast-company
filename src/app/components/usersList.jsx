@@ -16,6 +16,7 @@ const UsersList = () => {
   const [selectedProfession, setSelectedProfession] = useState();
   const [sortBy, setSortBy] = useState({ path: "name", order: "asc" });
   const [users, setUsers] = useState();
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     setLoading(true);
@@ -36,15 +37,29 @@ const UsersList = () => {
       )
     );
   };
-
+  /* Поиск */
+  const searchRegExp = new RegExp(search);
+  console.log(searchRegExp, search);
+  const searchUsers =
+    search.length > 0
+      ? users.filter((user) => searchRegExp.test(user.name.toLowerCase()))
+      : users;
+  console.log(searchUsers);
+  /* Отфильтрованные по профессии */
   const filtredUsers = selectedProfession
-    ? users.filter((user) => user.profession._id === selectedProfession._id)
-    : users;
+    ? searchUsers.filter(
+        (user) => user.profession._id === selectedProfession._id
+      )
+    : searchUsers;
+  /* Колчиество */
   const countUsers = filtredUsers?.length ? filtredUsers.length : 0;
+  /* Сортировка колонки */
   const sortedUsers = _.orderBy(filtredUsers, [sortBy.path], [sortBy.order]);
+  /* Количество на странице */
   const userCrop = paginate(sortedUsers, currentPage, pageSize);
+  /* Количество страниц */
   const pageCount = totalPage(countUsers, pageSize);
-
+  // console.log(search, filtredUsers, sortedUsers, userCrop);
   useEffect(() => {
     // при удаление всех с последней страницы, переносит на предпоследнюю страницу
     if (pageCount > 0 && users?.length > pageSize && userCrop?.length === 0) {
@@ -64,6 +79,7 @@ const UsersList = () => {
 
   const handleProfessionSelect = (item) => {
     setSelectedProfession(item);
+    // setSearch("");
   };
 
   const handlePageChange = (pageIndex) => {
@@ -75,6 +91,9 @@ const UsersList = () => {
   };
   const handleSort = (item) => {
     setSortBy(item);
+  };
+  const handleSerach = ({ target }) => {
+    setSearch(target.value.toLowerCase());
   };
 
   return (
@@ -106,6 +125,11 @@ const UsersList = () => {
           </h2>
           {userCrop.length > 0 && (
             <>
+              <input
+                value={search}
+                onChange={handleSerach}
+                placeholder="Serach..."
+              />
               <UsersTable
                 users={userCrop}
                 onDeleteUser={handleDelete}
