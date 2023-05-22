@@ -39,12 +39,10 @@ const UsersList = () => {
   };
   /* Поиск */
   const searchRegExp = new RegExp(search);
-  console.log(searchRegExp, search);
-  const searchUsers =
-    search.length > 0
-      ? users.filter((user) => searchRegExp.test(user.name.toLowerCase()))
-      : users;
-  console.log(searchUsers);
+  const searchResult = users.filter((user) =>
+    searchRegExp.test(user.name.toLowerCase())
+  );
+  const searchUsers = searchResult.length > 0 ? searchResult : users;
   /* Отфильтрованные по профессии */
   const filtredUsers = selectedProfession
     ? searchUsers.filter(
@@ -59,7 +57,7 @@ const UsersList = () => {
   const userCrop = paginate(sortedUsers, currentPage, pageSize);
   /* Количество страниц */
   const pageCount = totalPage(countUsers, pageSize);
-  // console.log(search, filtredUsers, sortedUsers, userCrop);
+
   useEffect(() => {
     // при удаление всех с последней страницы, переносит на предпоследнюю страницу
     if (pageCount > 0 && users?.length > pageSize && userCrop?.length === 0) {
@@ -79,7 +77,7 @@ const UsersList = () => {
 
   const handleProfessionSelect = (item) => {
     setSelectedProfession(item);
-    // setSearch("");
+    setSearch("");
   };
 
   const handlePageChange = (pageIndex) => {
