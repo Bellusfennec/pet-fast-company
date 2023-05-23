@@ -1,14 +1,27 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import TextField from "../common/form/textField";
 import { validator } from "../../utils/validator";
+import API from "../../api";
+import SelectField from "../common/form/selectField";
+import RadioField from "../common/form/radioField";
 
-const LoginForm = () => {
-  const [formData, setFormData] = useState({ email: "", password: "" });
+const RegistrForm = () => {
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+    profession: "",
+    sex: "male"
+  });
   const [formError, setFormError] = useState({});
+  const [professions, setProfessions] = useState();
 
-  const handleForm = ({ target }) => {
+  const handleChangeForm = ({ target }) => {
     setFormData((prevState) => ({ ...prevState, [target.name]: target.value }));
   };
+
+  useEffect(() => {
+    API.professions.fetchAll().then((data) => setProfessions(data));
+  }, []);
 
   const validatorCongig = {
     email: {
@@ -33,6 +46,11 @@ const LoginForm = () => {
         message: "Пароль должен содержать не менее 8 символов",
         value: 8
       }
+    },
+    profession: {
+      isRequired: {
+        message: "Профессия обязательна для заполнения"
+      }
     }
   };
 
@@ -48,7 +66,7 @@ const LoginForm = () => {
 
   const isValid = Object.keys(formError).length === 0;
 
-  const handleSend = (e) => {
+  const handleSendForm = (e) => {
     e.preventDefault();
 
     const isValid = validate();
@@ -57,13 +75,13 @@ const LoginForm = () => {
   };
 
   return (
-    <form onSubmit={handleSend}>
+    <form onSubmit={handleSendForm}>
       <TextField
         label="Email"
         id="email"
         name="email"
         value={formData.email}
-        onChange={handleForm}
+        onChange={handleChangeForm}
         error={formError.email}
       />
       <TextField
@@ -72,8 +90,27 @@ const LoginForm = () => {
         id="password"
         name="password"
         value={formData.password}
-        onChange={handleForm}
+        onChange={handleChangeForm}
         error={formError.password}
+      />
+      <SelectField
+        label="Профессия"
+        name="profession"
+        value={formData.profession}
+        onChange={handleChangeForm}
+        defaultOption="Выберите..."
+        options={professions}
+        error={formError.profession}
+      />
+      <RadioField
+        name="sex"
+        value={formData.sex}
+        onChange={handleChangeForm}
+        options={[
+          { name: "Мужчина", value: "male" },
+          { name: "Женщина", value: "female" },
+          { name: "Другое", value: "other" }
+        ]}
       />
       <button
         type="submit"
@@ -86,4 +123,4 @@ const LoginForm = () => {
   );
 };
 
-export default LoginForm;
+export default RegistrForm;
