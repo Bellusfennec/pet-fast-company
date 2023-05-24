@@ -20,20 +20,18 @@ const UserPage = () => {
 
   return (
     <>
-      {" "}
-      {!loading ? (
+      {loading && <p>Loading...</p>}
+      {!loading && user && (
         <>
           <h1>{user.name}</h1>
           <h2>Профессия: {user.profession.name}</h2>
           <Qualities qualities={user.qualities} />
           <p>completedMeetings: {user.completedMeetings}</p>
           <h2>Rate: {user.rate}</h2>
-          <button onClick={() => history.push("/users")}>
-            Все пользователи
+          <button onClick={() => history.push(`/users/${userId}/edit`)}>
+            Изменить
           </button>
         </>
-      ) : (
-        "Loading..."
       )}
     </>
   );
