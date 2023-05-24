@@ -42,13 +42,12 @@ const UsersListPage = () => {
   const searchResult = users?.filter((user) =>
     searchRegExp.test(user.name.toLowerCase())
   );
-  const searchUsers = searchResult?.length > 0 ? searchResult : users;
   /* Отфильтрованные по профессии */
   const filtredUsers = selectedProfession
-    ? searchUsers.filter(
+    ? searchResult.filter(
         (user) => user.profession._id === selectedProfession._id
       )
-    : searchUsers;
+    : searchResult;
   /* Колчиество */
   const countUsers = filtredUsers?.length ? filtredUsers.length : 0;
   /* Сортировка колонки */
@@ -121,13 +120,18 @@ const UsersListPage = () => {
               loading={loading}
             />
           </h2>
+          {users && (
+            <input
+              value={search}
+              onChange={handleSerach}
+              placeholder="Serach..."
+            />
+          )}
+          {search && userCrop.length === 0 && (
+            <h5 className="mt-4">Не найдено</h5>
+          )}
           {userCrop.length > 0 && (
             <>
-              <input
-                value={search}
-                onChange={handleSerach}
-                placeholder="Serach..."
-              />
               <UsersTable
                 users={userCrop}
                 onDeleteUser={handleDelete}
