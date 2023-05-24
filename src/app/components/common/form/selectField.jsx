@@ -3,13 +3,10 @@ import React from "react";
 import PropTypes from "prop-types";
 
 const SelectField = (props) => {
-  const { label, value, onChange, defaultOption, options, error } = props;
+  const { label, value, onChange, defaultOption, options, error, name } = props;
   const optionsArray =
     !Array.isArray(options) && typeof options === "object"
-      ? Object.keys(options).map((optionName) => ({
-          name: options[optionName].name,
-          _id: options[optionName]._id
-        }))
+      ? Object.values(options)
       : options;
   const getInputClasses = () => {
     return "form-select" + (error ? " is-invalid" : "");
@@ -21,13 +18,13 @@ const SelectField = (props) => {
 
   return (
     <div className="mb-4">
-      <label htmlFor="validationCustom04" className="form-label">
+      <label htmlFor={name} className="form-label">
         {label}
       </label>
       <select
         className={getInputClasses()}
-        id="validationCustom04"
-        name="profession"
+        id={name}
+        name={name}
         value={value}
         onChange={handleChange}
       >
@@ -35,9 +32,9 @@ const SelectField = (props) => {
           {defaultOption}
         </option>
         {optionsArray &&
-          optionsArray.map(({ _id, name }) => (
-            <option key={_id} value={_id}>
-              {name}
+          optionsArray.map(({ value, label }) => (
+            <option key={value} value={value}>
+              {label}
             </option>
           ))}
       </select>
@@ -49,6 +46,7 @@ SelectField.defaultProps = {
   defaultOption: "Выберите..."
 };
 SelectField.propTypes = {
+  name: PropTypes.string,
   label: PropTypes.string,
   value: PropTypes.string,
   onChange: PropTypes.func,

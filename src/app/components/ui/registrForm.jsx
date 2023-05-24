@@ -29,8 +29,21 @@ const RegistrForm = () => {
   };
 
   useEffect(() => {
-    API.professions.fetchAll().then((data) => setProfessions(data));
-    API.qualities.fetchAll().then((data) => setQualities(data));
+    API.professions.fetchAll().then((data) => {
+      const professionsList = Object.keys(data).map((professionName) => ({
+        label: data[professionName].name,
+        value: data[professionName]._id
+      }));
+      setProfessions(professionsList);
+    });
+    API.qualities.fetchAll().then((data) => {
+      const qualitiesList = Object.keys(data).map((optionName) => ({
+        label: data[optionName].name,
+        value: data[optionName]._id,
+        color: data[optionName].color
+      }));
+      setQualities(qualitiesList);
+    });
   }, []);
 
   const validatorCongig = {
@@ -93,7 +106,35 @@ const RegistrForm = () => {
 
     const isValid = validate();
     if (!isValid) return;
-    console.log(formData);
+    const { profession, qualities } = formData;
+    console.log({
+      ...formData,
+      profession: getProfessionById(profession),
+      qualities: getQualities(qualities)
+    });
+  };
+
+  const getProfessionById = (id) => {
+    for (const prof of professions) {
+      if (prof.value === id) {
+        return { _id: prof.value, name: prof.label };
+      }
+    }
+  };
+  const getQualities = (elements) => {
+    const qualitiesArray = [];
+    for (const elem of elements) {
+      for (const quality in qualities) {
+        if (elem.value === qualities[quality].value) {
+          qualitiesArray.push({
+            _id: qualities[quality].value,
+            name: qualities[quality].label,
+            color: qualities[quality].color
+          });
+        }
+      }
+    }
+    return qualitiesArray;
   };
 
   return (
@@ -138,6 +179,7 @@ const RegistrForm = () => {
       <MultiSelectField
         label="Выберите ваши качества"
         options={qualities}
+        defaultValue={formData.qualities}
         onChange={handleChangeForm}
         name="qualities"
       />
