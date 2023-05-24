@@ -1,13 +1,21 @@
 import React, { useState, useEffect } from "react";
 import TextField from "../common/form/textField";
 import { validator } from "../../utils/validator";
+import CheckBoxField from "../common/form/checkBoxField";
 
 const LoginForm = () => {
-  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+    stayOn: false
+  });
   const [formError, setFormError] = useState({});
 
-  const handleForm = ({ target }) => {
-    setFormData((prevState) => ({ ...prevState, [target.name]: target.value }));
+  const handleChangeForm = (target) => {
+    setFormData((prevState) => ({
+      ...prevState,
+      [target.name]: target.value
+    }));
   };
 
   const validatorCongig = {
@@ -63,7 +71,7 @@ const LoginForm = () => {
         id="email"
         name="email"
         value={formData.email}
-        onChange={handleForm}
+        onChange={handleChangeForm}
         error={formError.email}
       />
       <TextField
@@ -72,9 +80,16 @@ const LoginForm = () => {
         id="password"
         name="password"
         value={formData.password}
-        onChange={handleForm}
+        onChange={handleChangeForm}
         error={formError.password}
       />
+      <CheckBoxField
+        value={formData.stayOn}
+        name="stayOn"
+        onChange={handleChangeForm}
+      >
+        Оставаться в системе
+      </CheckBoxField>
       <button
         type="submit"
         disabled={!isValid}

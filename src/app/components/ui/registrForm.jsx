@@ -4,23 +4,33 @@ import { validator } from "../../utils/validator";
 import API from "../../api";
 import SelectField from "../common/form/selectField";
 import RadioField from "../common/form/radioField";
+import MultiSelectField from "../common/form/multiSelectField";
+import CheckBoxField from "../common/form/checkBoxField";
 
 const RegistrForm = () => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
     profession: "",
-    sex: "male"
+    sex: "male",
+    qualities: [],
+    licence: false,
+    agreement: []
   });
+  const [qualities, setQualities] = useState({});
   const [formError, setFormError] = useState({});
   const [professions, setProfessions] = useState();
 
-  const handleChangeForm = ({ target }) => {
-    setFormData((prevState) => ({ ...prevState, [target.name]: target.value }));
+  const handleChangeForm = (target) => {
+    setFormData((prevState) => ({
+      ...prevState,
+      [target.name]: target.value
+    }));
   };
 
   useEffect(() => {
     API.professions.fetchAll().then((data) => setProfessions(data));
+    API.qualities.fetchAll().then((data) => setQualities(data));
   }, []);
 
   const validatorCongig = {
@@ -50,6 +60,18 @@ const RegistrForm = () => {
     profession: {
       isRequired: {
         message: "Профессия обязательна для заполнения"
+      }
+    },
+    licence: {
+      isRequired: {
+        message:
+          "Вы не можете использовать наш сервис без лицензионного соглашения"
+      }
+    },
+    agreement: {
+      isContainValue: {
+        message: "Согласие на обработку данных обязательно",
+        param: "1"
       }
     }
   };
@@ -94,7 +116,7 @@ const RegistrForm = () => {
         error={formError.password}
       />
       <SelectField
-        label="Профессия"
+        label="Выберите вашу профессию"
         name="profession"
         value={formData.profession}
         onChange={handleChangeForm}
@@ -103,6 +125,7 @@ const RegistrForm = () => {
         error={formError.profession}
       />
       <RadioField
+        label="Выберите ваш пол"
         name="sex"
         value={formData.sex}
         onChange={handleChangeForm}
@@ -112,6 +135,20 @@ const RegistrForm = () => {
           { name: "Другое", value: "other" }
         ]}
       />
+      <MultiSelectField
+        label="Выберите ваши качества"
+        options={qualities}
+        onChange={handleChangeForm}
+        name="qualities"
+      />
+      <CheckBoxField
+        value={formData.licence}
+        name="licence"
+        onChange={handleChangeForm}
+        error={formError.licence}
+      >
+        <a>Подтвердить лицензионное соглашение</a>
+      </CheckBoxField>
       <button
         type="submit"
         disabled={!isValid}

@@ -15,6 +15,10 @@ const SelectField = (props) => {
     return "form-select" + (error ? " is-invalid" : "");
   };
 
+  const handleChange = ({ target }) => {
+    onChange({ name: target.name, value: target.value });
+  };
+
   return (
     <div className="mb-4">
       <label htmlFor="validationCustom04" className="form-label">
@@ -25,7 +29,7 @@ const SelectField = (props) => {
         id="validationCustom04"
         name="profession"
         value={value}
-        onChange={onChange}
+        onChange={handleChange}
       >
         <option disabled value="">
           {defaultOption}
