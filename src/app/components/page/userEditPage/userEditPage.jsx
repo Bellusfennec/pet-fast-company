@@ -148,8 +148,8 @@ const UserEditPage = () => {
       <div className="container mt-5">
         <div className="row">
           <div className="col-md-6 offset-md-3 p-4 shadow">
-            {loading && <>Loading...</>}
-            {!loading && (
+            {loading && !formData && <>Loading...</>}
+            {formData && (
               <form onSubmit={handleSendForm}>
                 <TextField
                   label="Имя"
@@ -198,10 +198,10 @@ const UserEditPage = () => {
                 />
                 <button
                   type="submit"
-                  disabled={!isValid}
+                  disabled={!(!isValid || !loading)}
                   className="btn btn-primary w-100 mx-auto"
                 >
-                  Обновить
+                  {loading ? "Загрузка..." : "Обновить"}
                 </button>
               </form>
             )}
