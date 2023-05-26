@@ -17,12 +17,15 @@ const UserEditPage = () => {
   const [formError, setFormError] = useState({});
 
   useEffect(() => {
+    setLoading(!formData || !qualities || !professions);
+  });
+
+  useEffect(() => {
     getUser();
   }, []);
 
-  const getUser = async () => {
-    setLoading(true);
-    await API.users.getById(userId).then((data) => {
+  const getUser = () => {
+    API.users.getById(userId).then((data) => {
       const qualitiesList = data.qualities.map((optionName) => ({
         label: optionName.name,
         value: optionName._id,
@@ -34,14 +37,14 @@ const UserEditPage = () => {
         profession: data.profession._id
       });
     });
-    await API.professions.fetchAll().then((data) => {
+    API.professions.fetchAll().then((data) => {
       const professionsList = Object.keys(data).map((professionName) => ({
         label: data[professionName].name,
         value: data[professionName]._id
       }));
       setProfessions(professionsList);
     });
-    await API.qualities.fetchAll().then((data) => {
+    API.qualities.fetchAll().then((data) => {
       const qualitiesList = Object.keys(data).map((optionName) => ({
         label: data[optionName].name,
         value: data[optionName]._id,
@@ -49,7 +52,6 @@ const UserEditPage = () => {
       }));
       setQualities(qualitiesList);
     });
-    setLoading(false);
   };
 
   const handleChangeForm = (target) => {
