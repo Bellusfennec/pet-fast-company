@@ -17,8 +17,12 @@ const UserEditPage = () => {
   const [formError, setFormError] = useState({});
 
   useEffect(() => {
+    getUser();
+  }, []);
+
+  const getUser = async () => {
     setLoading(true);
-    API.users.getById(userId).then((data) => {
+    await API.users.getById(userId).then((data) => {
       const qualitiesList = data.qualities.map((optionName) => ({
         label: optionName.name,
         value: optionName._id,
@@ -26,18 +30,18 @@ const UserEditPage = () => {
       }));
       setFormData({
         ...data,
-        qualities: [...qualitiesList],
+        qualities: qualitiesList,
         profession: data.profession._id
       });
     });
-    API.professions.fetchAll().then((data) => {
+    await API.professions.fetchAll().then((data) => {
       const professionsList = Object.keys(data).map((professionName) => ({
         label: data[professionName].name,
         value: data[professionName]._id
       }));
       setProfessions(professionsList);
     });
-    API.qualities.fetchAll().then((data) => {
+    await API.qualities.fetchAll().then((data) => {
       const qualitiesList = Object.keys(data).map((optionName) => ({
         label: data[optionName].name,
         value: data[optionName]._id,
@@ -46,7 +50,7 @@ const UserEditPage = () => {
       setQualities(qualitiesList);
     });
     setLoading(false);
-  }, []);
+  };
 
   const handleChangeForm = (target) => {
     setFormData((prevState) => ({
@@ -144,8 +148,8 @@ const UserEditPage = () => {
       <div className="container mt-5">
         <div className="row">
           <div className="col-md-6 offset-md-3 p-4 shadow">
-            {(loading || !formData) && <>Loading...</>}
-            {!loading && formData && (
+            {loading && <>Loading...</>}
+            {!loading && (
               <form onSubmit={handleSendForm}>
                 <TextField
                   label="Имя"
