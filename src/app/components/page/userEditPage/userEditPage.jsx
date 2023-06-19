@@ -149,6 +149,16 @@ const UserEditPage = () => {
     <>
       <div className="container mt-5">
         <div className="row">
+          <div className="col-12">
+            <button
+              onClick={() => history.push(`/users/${userId}`)}
+              type="button"
+              className="btn btn-primary"
+            >
+              <i className="bi bi-caret-left"></i>
+              Назад
+            </button>
+          </div>
           <div className="col-md-6 offset-md-3 p-4 shadow">
             {loading && !formData && <>Loading...</>}
             {formData && (
