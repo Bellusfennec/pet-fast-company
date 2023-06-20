@@ -42,7 +42,8 @@ const CommentsList = () => {
   const handlerSendCommentForm = () => {
     const isValid = validate();
     if (!isValid) return;
-    API.comments.add(commentForm).then((data) => {
+    const formData = { ...commentForm, pageId: userId };
+    API.comments.add(formData).then((data) => {
       setComments([...comments, data]);
       setCommentForm({});
     });
@@ -137,7 +138,7 @@ const CommentsList = () => {
           </div>
         </div>
       </div>
-      {comments && (
+      {comments && comments.length > 0 && (
         <div className="card mb-3">
           <div className="card-body">
             <h2>Comments</h2>

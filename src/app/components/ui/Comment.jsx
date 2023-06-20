@@ -8,10 +8,42 @@ const Comment = ({ comment, onRemove }) => {
 
   console.log("comm");
 
-  const date = (date) => {
+  const date = (ms) => {
+    let result;
     const now = new Date();
-    console.log(date, now);
-    return date;
+    const date = new Date(Number(ms));
+    const diff = now - date;
+    // const min = new Date(diff).getMinutes();
+    const minut = Math.floor(diff / (1000 * 60));
+    const hour = Math.floor(diff / (1000 * 60 * 60));
+    const day = Math.floor(diff / (1000 * 60 * 60 * 24));
+    console.log(
+      "diff",
+      new Date(diff),
+      new Date(diff).getSeconds(),
+      new Date(diff).getMinutes(),
+      new Date(diff).getHours()
+    );
+
+    console.log("s", diff / 1000);
+    console.log("m", diff / (1000 * 60));
+
+    console.log("h", diff / (1000 * 60 * 60));
+    console.log("d", diff / (1000 * 60 * 60 * 24));
+    console.log("m", diff / (1000 * 60 * 60 * 24 * 12));
+    console.log("y", diff / (1000 * 60 * 60 * 24 * 12 * 360));
+    if (minut < 5) result = "1 минут назад";
+    if (minut < 10) result = "5 минут назад";
+    if (minut < 30) result = "10 минут назад";
+    if (minut < 60) result = "30 минут назад";
+    if (hour >= 1 && hour < 24) result = `${hour} ${minut}`;
+    if (day >= 1 && day <= 31) result = `${day}`;
+    // if (min < 30) result = "day.month";
+    // if (min < 30) result = "day.moth.year";
+
+    console.log("---", result);
+
+    return result;
   };
 
   useEffect(() => {
