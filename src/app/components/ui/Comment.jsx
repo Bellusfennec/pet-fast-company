@@ -1,49 +1,40 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import API from "../../api";
 
-const Comment = ({ comment, onRemove }) => {
+const Comment = (props) => {
+  const { onRemove, comment } = props;
+
   const [user, setUser] = useState();
   const [loading, setLoading] = useState(true);
 
-  console.log("comm");
-
   const date = (ms) => {
-    let result;
     const now = new Date();
     const date = new Date(Number(ms));
     const diff = now - date;
-    // const min = new Date(diff).getMinutes();
     const minut = Math.floor(diff / (1000 * 60));
-    const hour = Math.floor(diff / (1000 * 60 * 60));
+    // const hour = Math.floor(diff / (1000 * 60 * 60));
     const day = Math.floor(diff / (1000 * 60 * 60 * 24));
-    console.log(
-      "diff",
-      new Date(diff),
-      new Date(diff).getSeconds(),
-      new Date(diff).getMinutes(),
-      new Date(diff).getHours()
-    );
+    const year = Math.floor(diff / (1000 * 60 * 60 * 24 * 360));
+    // console.log(minut, hour, day, year);
 
-    console.log("s", diff / 1000);
-    console.log("m", diff / (1000 * 60));
-
-    console.log("h", diff / (1000 * 60 * 60));
-    console.log("d", diff / (1000 * 60 * 60 * 24));
-    console.log("m", diff / (1000 * 60 * 60 * 24 * 12));
-    console.log("y", diff / (1000 * 60 * 60 * 24 * 12 * 360));
-    if (minut < 5) result = "1 минут назад";
-    if (minut < 10) result = "5 минут назад";
-    if (minut < 30) result = "10 минут назад";
-    if (minut < 60) result = "30 минут назад";
-    if (hour >= 1 && hour < 24) result = `${hour} ${minut}`;
-    if (day >= 1 && day <= 31) result = `${day}`;
-    // if (min < 30) result = "day.month";
-    // if (min < 30) result = "day.moth.year";
-
-    console.log("---", result);
-
-    return result;
+    if (minut <= 1) return "1 минуту назад";
+    if (minut <= 5) return "5 минут назад";
+    if (minut <= 10) return "10 минут назад";
+    if (minut <= 30) return "30 минут назад";
+    if (minut > 30 && day === 0) {
+      return `${date.getHours()}:${date.getMinutes()}`;
+    }
+    if (day >= 1 && year === 0) {
+      return `${date.getDate()} ${date.toLocaleString("default", {
+        month: "long"
+      })}`;
+    }
+    if (year >= 1) {
+      return `${date.getDate()} ${date.toLocaleString("default", {
+        month: "long"
+      })} ${date.getFullYear()}`;
+    }
   };
 
   useEffect(() => {
@@ -52,6 +43,10 @@ const Comment = ({ comment, onRemove }) => {
       .getById(comment.userId)
       .then((data) => setUser(data))
       .finally(() => setLoading(false));
+  }, [comment]);
+
+  const handlerRemove = useCallback((id) => {
+    onRemove(id);
   }, []);
 
   return (
@@ -78,12 +73,12 @@ const Comment = ({ comment, onRemove }) => {
                 <div className="mb-4">
                   <div className="d-flex justify-content-between align-items-center">
                     <p className="mb-1">
-                      {user.name}
+                      {user && user.name}
                       {" - "}
                       <span className="small">{date(comment.created_at)}</span>
                     </p>
                     <button
-                      onClick={() => onRemove(comment._id)}
+                      onClick={() => handlerRemove(comment._id)}
                       type="button"
                       className="btn btn-sm text-primary d-flex align-items-center"
                     >
@@ -105,4 +100,4 @@ Comment.propTypes = {
   onRemove: PropTypes.func
 };
 
-export default Comment;
+export default React.memo(Comment);

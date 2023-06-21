@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import API from "../../api";
 import { useParams } from "react-router-dom/cjs/react-router-dom.min";
 import Comment from "./Comment";
@@ -26,18 +26,27 @@ const CommentsList = () => {
       .finally(() => setLoading(false));
   }, []);
 
-  const handlerRemoveComment = (commentId) => {
+  const handlerRemoveComment = useCallback((commentId) => {
     console.log(commentId);
     API.comments.remove(commentId).then(() => {
       const filtered = comments.filter((comment) => comment._id !== commentId);
       setComments(filtered);
     });
-  };
+  }, []);
 
-  const handlerChangeCommentForm = (event) => {
-    const { name, value } = event.target;
-    setCommentForm({ ...commentForm, [name]: value || "" });
-  };
+  const handlerChangeCommentForm = useCallback(
+    (event) => {
+      const { name, value } = event.target;
+      setCommentForm({ ...commentForm, [name]: value || "" });
+      // if (name !== "userId") {
+      //   setCommentForm((commentForm) => ({ ...commentForm, userId: "" }));
+      // }
+      // if (name !== "content" && !) {
+      //   setCommentForm((commentForm) => ({ ...commentForm, content: "" }));
+      // }
+    },
+    [commentForm]
+  );
 
   const handlerSendCommentForm = () => {
     const isValid = validate();
@@ -66,14 +75,13 @@ const CommentsList = () => {
     validate();
   }, [commentForm]);
 
-  const validate = () => {
+  const validate = useCallback(() => {
     const error = validator(commentForm, validatorCongig);
     setCommentFormError(error);
     return Object.keys(error).length === 0;
-  };
+  }, [commentForm]);
 
   const isValid = Object.keys(commentFormError).length === 0;
-  console.log(commentFormError);
 
   return (
     <>
@@ -84,7 +92,9 @@ const CommentsList = () => {
             <div className="mb-4">
               <select
                 onChange={handlerChangeCommentForm}
-                className="form-select"
+                className={
+                  "form-select" + (commentFormError.userId ? " is-invalid" : "")
+                }
                 name="userId"
                 value={commentForm.userId || ""}
               >
@@ -113,7 +123,10 @@ const CommentsList = () => {
               </label>
               <textarea
                 onChange={handlerChangeCommentForm}
-                className="form-control"
+                className={
+                  "form-control" +
+                  (commentFormError.content ? " is-invalid" : "")
+                }
                 id="exampleFormControlTextarea1"
                 rows="3"
                 name="content"
@@ -128,7 +141,9 @@ const CommentsList = () => {
             <div className="d-flex justify-content-end">
               <button
                 onClick={handlerSendCommentForm}
-                disabled={!isValid}
+                disabled={
+                  (!commentForm.content && !commentForm.userId) || !isValid
+                }
                 type="button"
                 className="btn btn-primary"
               >
