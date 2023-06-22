@@ -1,3 +1,7 @@
 {
-  "conventionalCommits.scopes": ["groupList", "user edit"]
+  "conventionalCommits.scopes": [
+    "groupList",
+    "user edit",
+    "user page"
+  ]
 }

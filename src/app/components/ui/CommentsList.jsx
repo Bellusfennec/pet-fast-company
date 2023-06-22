@@ -8,9 +8,11 @@ const CommentsList = () => {
   const { userId } = useParams();
   const [, setLoading] = useState(true);
   const [comments, setComments] = useState();
-  const [commentForm, setCommentForm] = useState({});
+  const initialForm = { userId: "", content: "" };
+  const [commentForm, setCommentForm] = useState(initialForm);
   const [commentFormError, setCommentFormError] = useState({});
   const [users, setUsers] = useState();
+  const [activated, setActivated] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -37,13 +39,10 @@ const CommentsList = () => {
   const handlerChangeCommentForm = useCallback(
     (event) => {
       const { name, value } = event.target;
+      if (!activated) {
+        setActivated(true);
+      }
       setCommentForm({ ...commentForm, [name]: value || "" });
-      // if (name !== "userId") {
-      //   setCommentForm((commentForm) => ({ ...commentForm, userId: "" }));
-      // }
-      // if (name !== "content" && !) {
-      //   setCommentForm((commentForm) => ({ ...commentForm, content: "" }));
-      // }
     },
     [commentForm]
   );
@@ -54,7 +53,8 @@ const CommentsList = () => {
     const formData = { ...commentForm, pageId: userId };
     API.comments.add(formData).then((data) => {
       setComments([...comments, data]);
-      setCommentForm({});
+      setCommentForm(initialForm);
+      setActivated(false);
     });
   };
 
@@ -72,8 +72,8 @@ const CommentsList = () => {
   };
 
   useEffect(() => {
-    validate();
-  }, [commentForm]);
+    activated ? validate() : setActivated(false);
+  }, [commentForm, activated]);
 
   const validate = useCallback(() => {
     const error = validator(commentForm, validatorCongig);

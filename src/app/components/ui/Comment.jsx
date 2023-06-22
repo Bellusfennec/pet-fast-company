@@ -13,27 +13,28 @@ const Comment = (props) => {
     const date = new Date(Number(ms));
     const diff = now - date;
     const minut = Math.floor(diff / (1000 * 60));
-    // const hour = Math.floor(diff / (1000 * 60 * 60));
     const day = Math.floor(diff / (1000 * 60 * 60 * 24));
     const year = Math.floor(diff / (1000 * 60 * 60 * 24 * 360));
     // console.log(minut, hour, day, year);
+
+    const getHour = normalizeValue(date.getHours());
+    const getMinutes = normalizeValue(date.getMinutes());
+    const getDay = normalizeValue(date.getDate());
+    const getMouth = date.toLocaleString("default", { month: "long" });
+    const getFullYear = date.getFullYear();
 
     if (minut <= 1) return "1 минуту назад";
     if (minut <= 5) return "5 минут назад";
     if (minut <= 10) return "10 минут назад";
     if (minut <= 30) return "30 минут назад";
     if (minut > 30 && day === 0) {
-      return `${date.getHours()}:${date.getMinutes()}`;
+      return `${getHour}:${getMinutes}`;
     }
     if (day >= 1 && year === 0) {
-      return `${date.getDate()} ${date.toLocaleString("default", {
-        month: "long"
-      })}`;
+      return `${getDay} ${getMouth}`;
     }
     if (year >= 1) {
-      return `${date.getDate()} ${date.toLocaleString("default", {
-        month: "long"
-      })} ${date.getFullYear()}`;
+      return `${getDay} ${getMouth} ${getFullYear}`;
     }
   };
 
@@ -48,6 +49,10 @@ const Comment = (props) => {
   const handlerRemove = useCallback((id) => {
     onRemove(id);
   }, []);
+
+  function normalizeValue(value) {
+    return value.toString().length > 1 ? value : `0${value}`;
+  }
 
   return (
     <div className="bg-light card-body mb-3">
