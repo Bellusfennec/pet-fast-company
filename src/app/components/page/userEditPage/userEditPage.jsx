@@ -6,6 +6,7 @@ import RadioField from "../../common/form/radioField";
 import SelectField from "../../common/form/selectField";
 import TextField from "../../common/form/textField";
 import { validator } from "../../../utils/validator";
+import BackHistoryButton from "../../ui/BackHistoryButton";
 
 const UserEditPage = () => {
   const history = useHistory();
@@ -150,14 +151,7 @@ const UserEditPage = () => {
       <div className="container mt-5">
         <div className="row">
           <div className="col-12">
-            <button
-              onClick={() => history.push(`/users/${userId}`)}
-              type="button"
-              className="btn btn-primary"
-            >
-              <i className="bi bi-caret-left"></i>
-              Назад
-            </button>
+            <BackHistoryButton />
           </div>
           <div className="col-md-6 offset-md-3 p-4 shadow">
             {loading && !formData && <>Loading...</>}
