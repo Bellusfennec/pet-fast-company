@@ -32,6 +32,7 @@ const UserPage = () => {
                     onClick={() => history.push(`/users/${userId}/edit`)}
                     type="button"
                     className="position-absolute top-0 end-0 btn btn-light btn-sm"
+                    style={{ zIndex: "1" }}
                   >
                     <i className="bi bi-gear"></i>
                   </button>
