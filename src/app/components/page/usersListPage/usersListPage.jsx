@@ -7,35 +7,41 @@ import api from "../../../api";
 import SearchStatus from "../../ui/searchStatus";
 import UsersTable from "../../ui/usersTable";
 import _ from "lodash";
+import { useUser } from "../../../hooks/useUsers";
 
 const UsersListPage = () => {
   const pageSize = 8;
-  const [loading, setLoading] = useState(true);
+  const [loading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [professions, setProfessions] = useState();
   const [selectedProfession, setSelectedProfession] = useState();
   const [sortBy, setSortBy] = useState({ path: "name", order: "asc" });
-  const [users, setUsers] = useState();
   const [search, setSearch] = useState("");
 
-  useEffect(() => {
-    setLoading(true);
-    api.users
-      .fetchAll()
-      .then((data) => setUsers(data))
-      .finally(() => setLoading(false));
-  }, []);
+  const { users } = useUser();
+  console.log(users);
+  // const [users, setUsers] = useState();
+
+  // useEffect(() => {
+  //   setLoading(true);
+  //   api.users
+  //     .fetchAll()
+  //     .then((data) => setUsers(data))
+  //     .finally(() => setLoading(false));
+  // }, []);
 
   const handleDelete = (userId) => {
-    setUsers((prev) => prev.filter((user) => user._id !== userId));
+    // setUsers((prev) => prev.filter((user) => user._id !== userId));
+    console.log(userId);
   };
 
   const handleToggleBookMark = (id) => {
-    setUsers((prevState) =>
-      prevState.map((item) =>
-        item._id === id ? { ...item, bookmark: !item.bookmark } : item
-      )
-    );
+    // setUsers((prevState) =>
+    //   prevState.map((item) =>
+    //     item._id === id ? { ...item, bookmark: !item.bookmark } : item
+    //   )
+    // );
+    console.log(id);
   };
   /* Поиск */
   const searchRegExp = new RegExp(search);
