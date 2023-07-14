@@ -31,12 +31,7 @@ const AuthProvider = ({ children }) => {
       errorCatcher(error);
       const { code, message } = error.response.data.error;
       if (code === 400) {
-        if (message === "EMAIL_EXISTS") {
-          const errorObject = {
-            email: " Пользователь с таким Email уже существует"
-          };
-          throw errorObject;
-        }
+        errorThrow(message);
       }
     }
   }
@@ -56,18 +51,7 @@ const AuthProvider = ({ children }) => {
       const { code, message } = error.response.data.error;
       console.log(code, message);
       if (code === 400) {
-        if (message === "INVALID_PASSWORD") {
-          const errorObject = {
-            password: "Проверьте пароль"
-          };
-          throw errorObject;
-        }
-        if (message === "EMAIL_NOT_FOUND") {
-          const errorObject = {
-            email: "Проверьте email"
-          };
-          throw errorObject;
-        }
+        errorThrow(message);
       }
     }
   }
@@ -92,6 +76,36 @@ const AuthProvider = ({ children }) => {
       setError(null);
     }
   }, [error]);
+
+  function errorThrow(message) {
+    if (message === "EMAIL_NOT_FOUND" || message === "INVALID_PASSWORD") {
+      const errorObject = {
+        email: "Некорректная электронная почта или пароль",
+        password: "Некорректная электронная почта или пароль"
+      };
+      throw errorObject;
+    }
+    if (message === "EMAIL_EXISTS") {
+      const errorObject = {
+        email: "Пользователь с такой электронной почтой уже существует"
+      };
+      throw errorObject;
+    }
+    if (
+      message === "WEAK_PASSWORD : Password should be at least 6 characters"
+    ) {
+      const errorObject = {
+        password: "Минимальная длинна 6 символов"
+      };
+      throw errorObject;
+    }
+    if (message === "INVALID_EMAIL") {
+      const errorObject = {
+        email: "Проверьте корректность электронной почты"
+      };
+      throw errorObject;
+    }
+  }
 
   return (
     <AuthContext.Provider
