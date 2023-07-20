@@ -1,36 +1,18 @@
-import React, { useCallback, useEffect, useState } from "react";
-import API from "../../api";
-import { useParams } from "react-router-dom";
+import { orderBy } from "lodash";
+import React from "react";
+import { useComments } from "../../hooks/useComments";
 import Comment from "./Comment";
 import CreateComment from "./CreateComment";
-import { orderBy } from "lodash";
 
 const CommentsList = () => {
-  const { userId } = useParams();
-  const [, setLoading] = useState(true);
-  const [comments, setComments] = useState();
+  const { createComment, comments, removeComment } = useComments();
 
-  useEffect(() => {
-    setLoading(true);
-    API.comments
-      .fetchCommentsForUser(userId)
-      .then((data) => {
-        setComments(data);
-      })
-      .finally(() => setLoading(false));
-  }, []);
+  const handlerRemoveComment = (commentId) => {
+    removeComment(commentId);
+  };
 
-  const handlerRemoveComment = useCallback((commentId) => {
-    API.comments.remove(commentId).then(() => {
-      const filtered = comments.filter((comment) => comment._id !== commentId);
-      setComments(filtered);
-    });
-  }, []);
-
-  const handlerSubmitComment = (formData) => {
-    API.comments.add(formData).then((data) => {
-      setComments([...comments, data]);
-    });
+  const handlerSubmitComment = (data) => {
+    createComment(data);
   };
 
   const sortedComments = orderBy(comments, ["created_at"], ["desc"]);

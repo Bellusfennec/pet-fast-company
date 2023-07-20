@@ -1,48 +1,42 @@
 /* eslint-disable multiline-ternary */
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useHistory, useParams } from "react-router-dom";
-import API from "../../../api";
 import Qualities from "../../ui/qualities";
 import CommentsList from "../../ui/CommentsList";
+import { useUser } from "../../../hooks/useUsers";
+import { useAuth } from "../../../hooks/useAuth";
+import { CommentProvider } from "../../../hooks/useComments";
 
 const UserPage = () => {
   const history = useHistory();
   const { userId } = useParams();
-  const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState();
-
-  useEffect(() => {
-    setLoading(true);
-    API.users
-      .getById(userId)
-      .then((data) => setUser(data))
-      .finally(() => setLoading(false));
-  }, []);
+  const { getUserById } = useUser();
+  const user = getUserById(userId);
+  const { currentUser } = useAuth();
 
   return (
     <div className="container">
       <div className="row gutters-sm">
-        {loading && <p>Loading...</p>}
-        {!loading && user && (
+        {!user && <p>Loading...</p>}
+        {user && (
           <>
             <div className="col-md-4 mb-3">
               <div className="card mb-3">
                 <div className="card-body">
-                  <button
-                    onClick={() => history.push(`/users/${userId}/edit`)}
-                    type="button"
-                    className="position-absolute top-0 end-0 btn btn-light btn-sm"
-                    style={{ zIndex: "1" }}
-                  >
-                    <i className="bi bi-gear"></i>
-                  </button>
+                  {user._id === currentUser._id && (
+                    <button
+                      onClick={() => history.push(`/users/${userId}/edit`)}
+                      type="button"
+                      className="position-absolute top-0 end-0 btn btn-light btn-sm"
+                      style={{ zIndex: "1" }}
+                    >
+                      <i className="bi bi-gear"></i>
+                    </button>
+                  )}
+
                   <div className="d-flex flex-column align-items-center text-center position-relative">
                     <img
-                      src={`https://avatars.dicebear.com/api/avataaars/${(
-                        Math.random() + 1
-                      )
-                        .toString(36)
-                        .substring(7)}.svg`}
+                      src={user.image}
                       className="rounded-circle"
                       width="150"
                     />
@@ -90,7 +84,9 @@ const UserPage = () => {
             </div>
 
             <div className="col-md-8">
-              <CommentsList />
+              <CommentProvider>
+                <CommentsList />
+              </CommentProvider>
             </div>
           </>
         )}
