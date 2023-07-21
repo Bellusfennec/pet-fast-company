@@ -18,13 +18,6 @@ export const QualitiesProvider = ({ children }) => {
     getQualitiesList();
   }, []);
 
-  useEffect(() => {
-    if (error !== null) {
-      toast.error(error);
-      setError(null);
-    }
-  }, [error]);
-
   const getQuality = (id) => {
     return qualities.find((q) => q._id === id);
   };
@@ -33,9 +26,10 @@ export const QualitiesProvider = ({ children }) => {
     try {
       const { content } = await qualityService.fetchAll();
       setQualities(content);
-      setLoading(false);
     } catch (error) {
       errorCather(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -82,6 +76,13 @@ export const QualitiesProvider = ({ children }) => {
     const { message } = error.response.data;
     setError(message);
   }
+
+  useEffect(() => {
+    if (error !== null) {
+      toast.error(error);
+      setError(null);
+    }
+  }, [error]);
 
   return (
     <QualitiesContext.Provider

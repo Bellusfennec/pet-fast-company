@@ -1,59 +1,56 @@
 import React, { useEffect, useState } from "react";
-import API from "../../../api";
-import { useHistory, useParams } from "react-router-dom";
+import { useParams, useHistory } from "react-router-dom";
 import MultiSelectField from "../../common/form/multiSelectField";
 import RadioField from "../../common/form/radioField";
 import SelectField from "../../common/form/selectField";
 import TextField from "../../common/form/textField";
 import { validator } from "../../../utils/validator";
 import BackHistoryButton from "../../ui/BackHistoryButton";
+import { useUser } from "../../../hooks/useUsers";
+import { useProfessions } from "../../../hooks/useProfession";
+import { useQualities } from "../../../hooks/useQualities";
+import { useAuth } from "../../../hooks/useAuth";
 
 const UserEditPage = () => {
   const history = useHistory();
+  const { updateUser, currentUser } = useAuth();
   const { userId } = useParams();
+  const { getUserById } = useUser();
+  const id = currentUser._id === userId ? userId : currentUser._id;
+  const user = getUserById(id);
+  const { qualities: qualitiesList, getQuality } = useQualities();
+  const { professions: professionsList } = useProfessions();
+  const [qualities, setQualities] = useState([]);
+  const [professions, setProfessions] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [formData, setFormData] = useState();
-  const [qualities, setQualities] = useState({});
-  const [professions, setProfessions] = useState();
+  const [formData, setFormData] = useState({});
   const [formError, setFormError] = useState({});
 
   useEffect(() => {
-    setLoading(!formData || !qualities || !professions);
-  });
-
-  useEffect(() => {
-    getUser();
-  }, []);
-
-  const getUser = () => {
-    API.users.getById(userId).then((data) => {
-      const qualitiesList = data.qualities.map((optionName) => ({
-        label: optionName.name,
-        value: optionName._id,
-        color: optionName.color
+    if (qualitiesList.length > 0 && user) {
+      const transformed = qualitiesList.map((q) => ({
+        label: q.name,
+        value: q._id,
+        color: q.color
       }));
-      setFormData({
-        ...data,
-        qualities: qualitiesList,
-        profession: data.profession._id
+      setQualities(transformed);
+      const qualities = user.qualities.map((id) => {
+        const { name, _id, color } = getQuality(id);
+        return { label: name, value: _id, color };
       });
-    });
-    API.professions.fetchAll().then((data) => {
-      const professionsList = Object.keys(data).map((professionName) => ({
-        label: data[professionName].name,
-        value: data[professionName]._id
+      setFormData({ ...user, qualities });
+    }
+    if (professionsList.length > 0) {
+      const transformed = professionsList.map((p) => ({
+        label: p.name,
+        value: p._id
       }));
-      setProfessions(professionsList);
-    });
-    API.qualities.fetchAll().then((data) => {
-      const qualitiesList = Object.keys(data).map((optionName) => ({
-        label: data[optionName].name,
-        value: data[optionName]._id,
-        color: data[optionName].color
-      }));
-      setQualities(qualitiesList);
-    });
-  };
+      setProfessions(transformed);
+    }
+    if (professionsList.length > 0 && qualitiesList.length > 0 && user) {
+      setLoading(false);
+    }
+  }, [qualitiesList, professionsList]);
 
   const handleChangeForm = (target) => {
     setFormData((prevState) => ({
@@ -110,40 +107,12 @@ const UserEditPage = () => {
 
     const isValid = validate();
     if (!isValid) return;
-    const { profession, qualities } = formData;
+    const { qualities } = formData;
     const formatForm = {
       ...formData,
-      profession: getProfessionById(profession),
-      qualities: getQualities(qualities)
+      qualities: qualities.map((q) => q.value)
     };
-    API.users.update(formatForm._id, formatForm).then((data) => {
-      console.log(data);
-      history.push(`/users/${userId}`);
-    });
-  };
-
-  const getProfessionById = (id) => {
-    for (const prof of professions) {
-      if (prof.value === id) {
-        return { _id: prof.value, name: prof.label };
-      }
-    }
-  };
-
-  const getQualities = (elements) => {
-    const qualitiesArray = [];
-    for (const elem of elements) {
-      for (const quality in qualities) {
-        if (elem.value === qualities[quality].value) {
-          qualitiesArray.push({
-            _id: qualities[quality].value,
-            name: qualities[quality].label,
-            color: qualities[quality].color
-          });
-        }
-      }
-    }
-    return qualitiesArray;
+    updateUser(formatForm).then(() => history.push(`/users/${id}`));
   };
 
   return (
@@ -154,8 +123,8 @@ const UserEditPage = () => {
             <BackHistoryButton />
           </div>
           <div className="col-md-6 offset-md-3 p-4 shadow">
-            {loading && !formData && <>Loading...</>}
-            {formData && (
+            {loading && <>Loading...</>}
+            {!loading && (
               <form onSubmit={handleSendForm}>
                 <TextField
                   label="Имя"

@@ -18,13 +18,6 @@ export const ProfessionProvider = ({ children }) => {
     getProfessionsList();
   }, []);
 
-  useEffect(() => {
-    if (error !== null) {
-      toast.error(error);
-      setError(null);
-    }
-  }, [error]);
-
   function getProfession(id) {
     return professions.find((p) => p._id === id);
   }
@@ -33,9 +26,10 @@ export const ProfessionProvider = ({ children }) => {
     try {
       const { content } = await professionService.get();
       setProfessions(content);
-      setLoading(false);
     } catch (error) {
       errorCatcher(error);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -43,6 +37,13 @@ export const ProfessionProvider = ({ children }) => {
     const { message } = error.response.data;
     setError(message);
   }
+
+  useEffect(() => {
+    if (error !== null) {
+      toast.error(error);
+      setError(null);
+    }
+  }, [error]);
 
   return (
     <ProfessionContext.Provider
