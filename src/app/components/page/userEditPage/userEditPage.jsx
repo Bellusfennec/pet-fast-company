@@ -13,11 +13,10 @@ import { useAuth } from "../../../hooks/useAuth";
 
 const UserEditPage = () => {
   const history = useHistory();
-  const { updateUser, currentUser } = useAuth();
   const { userId } = useParams();
+  const { updateUser } = useAuth();
   const { getUserById } = useUser();
-  const id = currentUser._id === userId ? userId : currentUser._id;
-  const user = getUserById(id);
+  const user = getUserById(userId);
   const { qualities: qualitiesList, getQuality } = useQualities();
   const { professions: professionsList } = useProfessions();
   const [qualities, setQualities] = useState([]);
@@ -102,7 +101,7 @@ const UserEditPage = () => {
 
   const isValid = Object.keys(formError).length === 0;
 
-  const handleSendForm = (e) => {
+  const handleSendForm = async (e) => {
     e.preventDefault();
 
     const isValid = validate();
@@ -112,7 +111,7 @@ const UserEditPage = () => {
       ...formData,
       qualities: qualities.map((q) => q.value)
     };
-    updateUser(formatForm).then(() => history.push(`/users/${id}`));
+    await updateUser(formatForm).then(() => history.push(`/users/${userId}`));
   };
 
   return (
