@@ -29,10 +29,7 @@ http.interceptors.request.use(
       }
       const accessToken = localStorageService.getAccessToken();
       if (accessToken) {
-        config.params = {
-          ...config.params,
-          auth: accessToken
-        };
+        config.params = { ...config.params, auth: accessToken };
       }
     }
 

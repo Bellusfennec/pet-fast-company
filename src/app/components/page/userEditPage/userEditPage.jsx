@@ -7,8 +7,9 @@ import TextField from "../../common/form/textField";
 import { validator } from "../../../utils/validator";
 import BackHistoryButton from "../../ui/BackHistoryButton";
 import { useProfessions } from "../../../hooks/useProfession";
-import { useQualities } from "../../../hooks/useQualities";
 import { useAuth } from "../../../hooks/useAuth";
+import { useSelector } from "react-redux";
+import { getQualities, getQualitiesIsLoading } from "../../../store/qualities";
 
 const UserEditPage = () => {
   const history = useHistory();
@@ -16,6 +17,8 @@ const UserEditPage = () => {
   const { updateUser, currentUser } = useAuth();
   const user = currentUser;
   const { qualities: qualitiesList, getQuality } = useQualities();
+  const qualitiesList = useSelector(getQualities());
+  const qualitiesIsLoading = useSelector(getQualitiesIsLoading());
   const { professions: professionsList } = useProfessions();
   const [qualities, setQualities] = useState([]);
   const [professions, setProfessions] = useState([]);
@@ -24,7 +27,7 @@ const UserEditPage = () => {
   const [formError, setFormError] = useState({});
 
   useEffect(() => {
-    if (qualitiesList.length > 0 && user) {
+    if (!qualitiesIsLoading && user) {
       const transformed = qualitiesList.map((q) => ({
         label: q.name,
         value: q._id,
@@ -32,7 +35,7 @@ const UserEditPage = () => {
       }));
       setQualities(transformed);
       const qualities = user.qualities.map((id) => {
-        const { name, _id, color } = getQuality(id);
+        const { name, _id, color } = qualities.find((q) => q._id === id);
         return { label: name, value: _id, color };
       });
       setFormData({ ...user, qualities });
