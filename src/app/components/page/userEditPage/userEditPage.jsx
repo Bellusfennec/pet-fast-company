@@ -15,42 +15,47 @@ const UserEditPage = () => {
   const history = useHistory();
   const { userId } = useParams();
   const { updateUser, currentUser } = useAuth();
-  const user = currentUser;
-  const { qualities: qualitiesList, getQuality } = useQualities();
   const qualitiesList = useSelector(getQualities());
-  const qualitiesIsLoading = useSelector(getQualitiesIsLoading());
-  const { professions: professionsList } = useProfessions();
-  const [qualities, setQualities] = useState([]);
-  const [professions, setProfessions] = useState([]);
+  const qualities = tranformQualities(qualitiesList);
+  const isLoadingQualities = useSelector(getQualitiesIsLoading());
+  const { professions: professionsList, isLoading: isLoadingProfession } =
+    useProfessions();
+  const professions = transformProfessions(professionsList);
   const [loading, setLoading] = useState(true);
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState();
   const [formError, setFormError] = useState({});
 
   useEffect(() => {
-    if (!qualitiesIsLoading && user) {
-      const transformed = qualitiesList.map((q) => ({
-        label: q.name,
-        value: q._id,
-        color: q.color
-      }));
-      setQualities(transformed);
-      const qualities = user.qualities.map((id) => {
-        const { name, _id, color } = qualities.find((q) => q._id === id);
-        return { label: name, value: _id, color };
+    if (!isLoadingQualities && !isLoadingProfession && currentUser) {
+      const qualitiesData = currentUser.qualities.map((id) => {
+        return qualities.find((q) => q.value === id);
       });
-      setFormData({ ...user, qualities });
+      setFormData({
+        ...currentUser,
+        qualities: qualitiesData
+      });
     }
-    if (professionsList.length > 0) {
-      const transformed = professionsList.map((p) => ({
-        label: p.name,
-        value: p._id
-      }));
-      setProfessions(transformed);
-    }
-    if (professionsList.length > 0 && qualitiesList.length > 0 && user) {
+  }, [isLoadingQualities, isLoadingProfession, currentUser]);
+
+  useEffect(() => {
+    if (formData && loading) {
       setLoading(false);
     }
-  }, [qualitiesList, professionsList]);
+  }, [formData]);
+
+  function tranformQualities(data) {
+    return data.map((q) => ({
+      label: q.name,
+      value: q._id,
+      color: q.color
+    }));
+  }
+  function transformProfessions(data) {
+    return data.map((p) => ({
+      label: p.name,
+      value: p._id
+    }));
+  }
 
   const handleChangeForm = (target) => {
     setFormData((prevState) => ({
