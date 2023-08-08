@@ -1,12 +1,11 @@
 import React, { useCallback } from "react";
 import PropTypes from "prop-types";
-import { useAuth } from "../../hooks/useAuth";
 import { useSelector } from "react-redux";
-import { getUserById } from "../../store/users";
+import { getCurrentUserId, getUserById } from "../../store/users";
 
 const Comment = (props) => {
   const { onRemove, comment } = props;
-  const { currentUser } = useAuth();
+  const currentUserId = useSelector(getCurrentUserId());
   const user = useSelector(getUserById(comment.userId));
 
   const date = (ms) => {
@@ -67,7 +66,7 @@ const Comment = (props) => {
                     {" - "}
                     <span className="small">{date(comment.created_at)}</span>
                   </p>
-                  {currentUser._id === user._id && (
+                  {currentUserId === user._id && (
                     <button
                       onClick={() => handlerRemove(comment._id)}
                       type="button"

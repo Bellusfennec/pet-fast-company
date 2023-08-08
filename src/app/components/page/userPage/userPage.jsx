@@ -2,9 +2,8 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { useHistory, useParams } from "react-router-dom";
-import { useAuth } from "../../../hooks/useAuth";
 import { CommentProvider } from "../../../hooks/useComments";
-import { getUserById } from "../../../store/users";
+import { getCurrentUserId, getUserById } from "../../../store/users";
 import CommentsList from "../../ui/CommentsList";
 import Profession from "../../ui/profession";
 import Qualities from "../../ui/qualities";
@@ -13,7 +12,7 @@ const UserPage = () => {
   const history = useHistory();
   const { userId } = useParams();
   const user = useSelector(getUserById(userId));
-  const { currentUser } = useAuth();
+  const currentUserId = useSelector(getCurrentUserId());
 
   return (
     <div className="container">
@@ -24,7 +23,7 @@ const UserPage = () => {
             <div className="col-md-4 mb-3">
               <div className="card mb-3">
                 <div className="card-body">
-                  {user._id === currentUser._id && (
+                  {user._id === currentUserId && (
                     <button
                       onClick={() => history.push(`/users/${userId}/edit`)}
                       type="button"

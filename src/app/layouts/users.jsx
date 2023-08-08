@@ -1,26 +1,27 @@
 import React from "react";
-import UsersListPage from "../components/page/usersListPage";
-import { useHistory, useParams, Redirect } from "react-router-dom";
-import UserPage from "../components/page/userPage";
+import { useSelector } from "react-redux";
+import { Redirect, useHistory, useParams } from "react-router-dom";
 import UserEditPage from "../components/page/userEditPage/userEditPage";
-import UserProvider from "../hooks/useUsers";
-import { useAuth } from "../hooks/useAuth";
+import UserPage from "../components/page/userPage";
+import UsersListPage from "../components/page/usersListPage";
+import UserLoader from "../components/ui/hoc/userLoader";
+import { getCurrentUserId } from "../store/users";
 
 const Users = () => {
   const { location } = useHistory();
   const edit = location.pathname.includes("edit");
   const { userId } = useParams();
-  const { currentUser } = useAuth();
+  const currentUserId = useSelector(getCurrentUserId());
 
-  if (userId && edit && currentUser._id !== userId) {
-    return <Redirect to={`/users/${currentUser._id}/edit`} />;
+  if (userId && edit && currentUserId !== userId) {
+    return <Redirect to={`/users/${currentUserId}/edit`} />;
   }
   return (
-    <UserProvider>
+    <UserLoader>
       {userId && edit && <UserEditPage />}
       {userId && !edit && <UserPage />}
       {!userId && <UsersListPage />}
-    </UserProvider>
+    </UserLoader>
   );
 };
 

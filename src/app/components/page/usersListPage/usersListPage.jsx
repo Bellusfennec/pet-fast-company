@@ -2,12 +2,11 @@
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { useAuth } from "../../../hooks/useAuth";
 import {
   getProfessions,
   getProfessionsIsLoading
 } from "../../../store/professions";
-import { getUsers } from "../../../store/users";
+import { getCurrentUserId, getUsers } from "../../../store/users";
 import { paginate, totalPage } from "../../../utils/paginate";
 import GroupList from "../../common/groupList";
 import Pagination from "../../common/pagination";
@@ -17,7 +16,7 @@ import UsersTable from "../../ui/usersTable";
 const UsersListPage = () => {
   const pageSize = 8;
   const [loading] = useState(true);
-  const { currentUser } = useAuth();
+  const currentUserId = useSelector(getCurrentUserId());
   const professions = useSelector(getProfessions());
   const professionLoading = useSelector(getProfessionsIsLoading());
   const [currentPage, setCurrentPage] = useState(1);
@@ -56,7 +55,7 @@ const UsersListPage = () => {
           (user) => user.profession._id === selectedProfession._id
         )
       : searchResult;
-    return filtredUsers.filter((u) => u._id !== currentUser._id);
+    return filtredUsers.filter((u) => u._id !== currentUserId);
   }
 
   useEffect(() => {

@@ -7,6 +7,7 @@ import {
   getProfessionsIsLoading
 } from "../../../store/professions";
 import { getQualities, getQualitiesIsLoading } from "../../../store/qualities";
+import { getCurrentUserData } from "../../../store/users";
 import { validator } from "../../../utils/validator";
 import MultiSelectField from "../../common/form/multiSelectField";
 import RadioField from "../../common/form/radioField";
@@ -17,7 +18,8 @@ import BackHistoryButton from "../../ui/BackHistoryButton";
 const UserEditPage = () => {
   const history = useHistory();
   const { userId } = useParams();
-  const { updateUser, currentUser } = useAuth();
+  const { updateUser } = useAuth();
+  const currentUser = useSelector(getCurrentUserData());
   const qualitiesList = useSelector(getQualities());
   const qualities = tranformQualities(qualitiesList);
   const isLoadingQualities = useSelector(getQualitiesIsLoading());

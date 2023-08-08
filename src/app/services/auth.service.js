@@ -1,4 +1,5 @@
 import axios from "axios";
+import localStorageService from "./localStorage.service";
 // import localStorageService from "./localStorage.service";
 
 export const httpAuth = axios.create({
@@ -14,6 +15,21 @@ const authService = {
       email,
       password,
       returnSecureToken: true
+    });
+    return data;
+  },
+  login: async ({ email, password }) => {
+    const { data } = await httpAuth.post(`accounts:signInWithPassword`, {
+      email,
+      password,
+      returnSecureToken: true
+    });
+    return data;
+  },
+  refresh: async () => {
+    const { data } = await httpAuth.post("token", {
+      grant_type: "refresh_token",
+      refresh_token: localStorageService.getRefreshToken()
     });
     return data;
   }
