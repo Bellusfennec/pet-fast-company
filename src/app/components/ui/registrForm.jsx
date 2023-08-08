@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from "react";
-import TextField from "../common/form/textField";
-import { validator } from "../../utils/validator";
-import SelectField from "../common/form/selectField";
-import RadioField from "../common/form/radioField";
-import MultiSelectField from "../common/form/multiSelectField";
-import CheckBoxField from "../common/form/checkBoxField";
-import { useProfessions } from "../../hooks/useProfession";
-import { useAuth } from "../../hooks/useAuth";
-import { useHistory } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
+import { getProfessions } from "../../store/professions";
 import { getQualities } from "../../store/qualities";
+import { validator } from "../../utils/validator";
+import CheckBoxField from "../common/form/checkBoxField";
+import MultiSelectField from "../common/form/multiSelectField";
+import RadioField from "../common/form/radioField";
+import SelectField from "../common/form/selectField";
+import TextField from "../common/form/textField";
 
 const RegistrForm = () => {
   const history = useHistory();
   const qualities = useSelector(getQualities());
-  const { professions } = useProfessions();
+  const professions = useSelector(getProfessions());
   const [formData, setFormData] = useState({
     email: "",
     name: "",

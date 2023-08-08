@@ -1,15 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useHistory } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { useHistory, useParams } from "react-router-dom";
+import { useAuth } from "../../../hooks/useAuth";
+import {
+  getProfessions,
+  getProfessionsIsLoading
+} from "../../../store/professions";
+import { getQualities, getQualitiesIsLoading } from "../../../store/qualities";
+import { validator } from "../../../utils/validator";
 import MultiSelectField from "../../common/form/multiSelectField";
 import RadioField from "../../common/form/radioField";
 import SelectField from "../../common/form/selectField";
 import TextField from "../../common/form/textField";
-import { validator } from "../../../utils/validator";
 import BackHistoryButton from "../../ui/BackHistoryButton";
-import { useProfessions } from "../../../hooks/useProfession";
-import { useAuth } from "../../../hooks/useAuth";
-import { useSelector } from "react-redux";
-import { getQualities, getQualitiesIsLoading } from "../../../store/qualities";
 
 const UserEditPage = () => {
   const history = useHistory();
@@ -18,9 +21,9 @@ const UserEditPage = () => {
   const qualitiesList = useSelector(getQualities());
   const qualities = tranformQualities(qualitiesList);
   const isLoadingQualities = useSelector(getQualitiesIsLoading());
-  const { professions: professionsList, isLoading: isLoadingProfession } =
-    useProfessions();
+  const professionsList = useSelector(getProfessions());
   const professions = transformProfessions(professionsList);
+  const isLoadingProfession = useSelector(getProfessionsIsLoading());
   const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState();
   const [formError, setFormError] = useState({});

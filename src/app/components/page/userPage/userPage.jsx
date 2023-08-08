@@ -6,6 +6,7 @@ import CommentsList from "../../ui/CommentsList";
 import { useUser } from "../../../hooks/useUsers";
 import { useAuth } from "../../../hooks/useAuth";
 import { CommentProvider } from "../../../hooks/useComments";
+import Profession from "../../ui/profession";
 
 const UserPage = () => {
   const history = useHistory();
@@ -43,7 +44,7 @@ const UserPage = () => {
                     <div className="mt-3">
                       <h4>{user.name}</h4>
                       <p className="text-secondary mb-1">
-                        {user.profession.name}
+                        <Profession id={user.profession} />
                       </p>
                       <div className="text-muted">
                         <i
