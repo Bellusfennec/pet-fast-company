@@ -46,6 +46,23 @@ export const loadQualitiesList = () => async (dispatch, getState) => {
     }
   }
 };
+export const getQualitiesByIds2 = (ids) => (dispatch, getState) => {
+  const { entities } = getState().qualities;
+  if (entities) {
+    const qualitiesArray = [];
+    for (const id of ids) {
+      for (const quality of entities) {
+        if (quality._id === id) {
+          qualitiesArray.push(quality);
+          break;
+        }
+      }
+    }
+    return qualitiesArray;
+    // state.qualities.entities.find((q) => q._id === id);
+  }
+  return [];
+};
 
 export const getQualities = () => (state) => state.qualities.entities;
 export const getQualitiesIsLoading = () => (state) => state.qualities.isLoading;
