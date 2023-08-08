@@ -1,13 +1,13 @@
 import React, { useCallback } from "react";
 import PropTypes from "prop-types";
-import { useUser } from "../../hooks/useUsers";
 import { useAuth } from "../../hooks/useAuth";
+import { useSelector } from "react-redux";
+import { getUserById } from "../../store/users";
 
 const Comment = (props) => {
   const { onRemove, comment } = props;
-  const { getUserById } = useUser();
   const { currentUser } = useAuth();
-  const user = getUserById(comment.userId);
+  const user = useSelector(getUserById(comment.userId));
 
   const date = (ms) => {
     const now = new Date();

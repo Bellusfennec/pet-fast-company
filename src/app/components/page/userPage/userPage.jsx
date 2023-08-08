@@ -1,18 +1,18 @@
 /* eslint-disable multiline-ternary */
 import React from "react";
+import { useSelector } from "react-redux";
 import { useHistory, useParams } from "react-router-dom";
-import Qualities from "../../ui/qualities";
-import CommentsList from "../../ui/CommentsList";
-import { useUser } from "../../../hooks/useUsers";
 import { useAuth } from "../../../hooks/useAuth";
 import { CommentProvider } from "../../../hooks/useComments";
+import { getUserById } from "../../../store/users";
+import CommentsList from "../../ui/CommentsList";
 import Profession from "../../ui/profession";
+import Qualities from "../../ui/qualities";
 
 const UserPage = () => {
   const history = useHistory();
   const { userId } = useParams();
-  const { getUserById } = useUser();
-  const user = getUserById(userId);
+  const user = useSelector(getUserById(userId));
   const { currentUser } = useAuth();
 
   return (

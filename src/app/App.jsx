@@ -13,6 +13,7 @@ import Main from "./layouts/main";
 import Users from "./layouts/users";
 import { loadProfessionsList } from "./store/professions";
 import { loadQualitiesList } from "./store/qualities";
+import { loadUsersList } from "./store/users";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -20,6 +21,7 @@ const App = () => {
   useEffect(() => {
     dispatch(loadQualitiesList());
     dispatch(loadProfessionsList());
+    dispatch(loadUsersList());
   }, []);
 
   return (

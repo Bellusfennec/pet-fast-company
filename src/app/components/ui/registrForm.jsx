@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { useHistory } from "react-router-dom";
-import { useAuth } from "../../hooks/useAuth";
+import { useDispatch, useSelector } from "react-redux";
 import { getProfessions } from "../../store/professions";
 import { getQualities } from "../../store/qualities";
 import { validator } from "../../utils/validator";
@@ -10,9 +8,10 @@ import MultiSelectField from "../common/form/multiSelectField";
 import RadioField from "../common/form/radioField";
 import SelectField from "../common/form/selectField";
 import TextField from "../common/form/textField";
+import { signUp } from "../../store/users";
 
 const RegistrForm = () => {
-  const history = useHistory();
+  const dispatch = useDispatch();
   const qualities = useSelector(getQualities());
   const professions = useSelector(getProfessions());
   const [formData, setFormData] = useState({
@@ -25,7 +24,6 @@ const RegistrForm = () => {
     licence: false
   });
   const [formError, setFormError] = useState({});
-  const { signUp } = useAuth();
 
   const handleChangeForm = (target) => {
     setFormData((prevState) => ({
@@ -109,7 +107,7 @@ const RegistrForm = () => {
 
   const isValid = Object.keys(formError).length === 0;
 
-  const handleSendForm = async (e) => {
+  const handleSendForm = (e) => {
     e.preventDefault();
 
     const isValid = validate();
@@ -119,12 +117,7 @@ const RegistrForm = () => {
       ...formData,
       qualities: qualities.map((q) => q.value)
     };
-    try {
-      await signUp(newData);
-      history.push("/");
-    } catch (error) {
-      setFormError(error);
-    }
+    dispatch(signUp(newData));
   };
 
   return (

@@ -1,18 +1,18 @@
 /* eslint-disable indent */
-import React, { useEffect, useState } from "react";
-import Pagination from "../../common/pagination";
-import { paginate, totalPage } from "../../../utils/paginate";
-import GroupList from "../../common/groupList";
-import SearchStatus from "../../ui/searchStatus";
-import UsersTable from "../../ui/usersTable";
 import _ from "lodash";
-import { useUser } from "../../../hooks/useUsers";
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { useAuth } from "../../../hooks/useAuth";
 import {
   getProfessions,
   getProfessionsIsLoading
 } from "../../../store/professions";
-import { useSelector } from "react-redux";
+import { getUsers } from "../../../store/users";
+import { paginate, totalPage } from "../../../utils/paginate";
+import GroupList from "../../common/groupList";
+import Pagination from "../../common/pagination";
+import SearchStatus from "../../ui/searchStatus";
+import UsersTable from "../../ui/usersTable";
 
 const UsersListPage = () => {
   const pageSize = 8;
@@ -24,7 +24,7 @@ const UsersListPage = () => {
   const [selectedProfession, setSelectedProfession] = useState();
   const [sortBy, setSortBy] = useState({ path: "name", order: "asc" });
   const [search, setSearch] = useState("");
-  const { users } = useUser();
+  const users = useSelector(getUsers());
 
   const handleToggleBookMark = (id) => {
     // setUsers((prevState) =>
