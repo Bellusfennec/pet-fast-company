@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { useHistory, useParams } from "react-router-dom";
-import { useAuth } from "../../../hooks/useAuth";
+import { useDispatch, useSelector } from "react-redux";
+// import { useHistory, useParams } from "react-router-dom";
 import {
   getProfessions,
   getProfessionsIsLoading
 } from "../../../store/professions";
 import { getQualities, getQualitiesIsLoading } from "../../../store/qualities";
-import { getCurrentUserData } from "../../../store/users";
+import { getCurrentUserData, updateUser } from "../../../store/users";
 import { validator } from "../../../utils/validator";
 import MultiSelectField from "../../common/form/multiSelectField";
 import RadioField from "../../common/form/radioField";
@@ -16,9 +15,9 @@ import TextField from "../../common/form/textField";
 import BackHistoryButton from "../../ui/BackHistoryButton";
 
 const UserEditPage = () => {
-  const history = useHistory();
-  const { userId } = useParams();
-  const { updateUser } = useAuth();
+  // const history = useHistory();
+  // const { userId } = useParams();
+  const dispatch = useDispatch();
   const currentUser = useSelector(getCurrentUserData());
   const qualitiesList = useSelector(getQualities());
   const qualities = tranformQualities(qualitiesList);
@@ -112,7 +111,7 @@ const UserEditPage = () => {
 
   const isValid = Object.keys(formError).length === 0;
 
-  const handleSendForm = async (e) => {
+  const handleSendForm = (e) => {
     e.preventDefault();
 
     const isValid = validate();
@@ -122,7 +121,7 @@ const UserEditPage = () => {
       ...formData,
       qualities: qualities.map((q) => q.value)
     };
-    await updateUser(formatForm).then(() => history.push(`/users/${userId}`));
+    dispatch(updateUser(formatForm));
   };
 
   return (
