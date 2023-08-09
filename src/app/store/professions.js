@@ -46,23 +46,6 @@ export const loadProfessionsList = () => async (dispatch, getState) => {
     }
   }
 };
-export const getProfessionsByIds2 = (ids) => (dispatch, getState) => {
-  const { entities } = getState().professions;
-  if (entities) {
-    const professionsArray = [];
-    for (const id of ids) {
-      for (const profession of entities) {
-        if (profession._id === id) {
-          professionsArray.push(profession);
-          break;
-        }
-      }
-    }
-    return professionsArray;
-    // state.professions.entities.find((q) => q._id === id);
-  }
-  return [];
-};
 
 export const getProfessions = () => (state) => state.professions.entities;
 export const getProfessionsIsLoading = () => (state) =>

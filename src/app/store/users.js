@@ -5,6 +5,7 @@ import authService from "../services/auth.service";
 import localStorageService from "../services/localStorage.service";
 import getRandomInt from "../utils/getRandomInt";
 import history from "../utils/history";
+import generateAuthError from "../utils/generateAuthError";
 
 const initialState = localStorageService.getAccessToken()
   ? {
@@ -39,6 +40,9 @@ const usersSlice = createSlice({
     requestFailed: (state, action) => {
       state.error = action.payload;
       state.isLoading = false;
+    },
+    authRequested: (state) => {
+      state.error = null;
     },
     authRequestSuccess: (state, action) => {
       state.auth = action.payload;
@@ -75,6 +79,7 @@ const {
   recived,
   requested,
   requestFailed,
+  authRequested,
   authRequestSuccess,
   authRequestFailed,
   userCreated,
@@ -82,7 +87,6 @@ const {
   userUpdated
 } = actions;
 
-const authRequested = createAction("users/authRequested");
 const userCreateRequested = createAction("users/userCreateRequested");
 const userCreateFailed = createAction("users/userCreateFailed");
 const userUpdateRequested = createAction("users/userUpdateRequested");
@@ -98,7 +102,13 @@ export const login = (params) => async (dispatch) => {
     dispatch(authRequestSuccess({ userId: content.localId }));
     history.push(redirect);
   } catch (error) {
-    dispatch(authRequestFailed(error.message));
+    const { code, message } = error.response.data.error;
+    if (code === 400) {
+      const errorMessage = generateAuthError(message);
+      dispatch(authRequestFailed(errorMessage));
+    } else {
+      dispatch(authRequestFailed(error.message));
+    }
   }
 };
 export const signUp = (payload) => async (dispatch) => {
@@ -166,6 +176,7 @@ export const getCurrentUserData = () => (state) => {
     ? state.users.entities.find((u) => u._id === state.users.auth.userId)
     : null;
 };
+export const getAuthError = () => (state) => state.users.error;
 export const getCurrentUserId = () => (state) => state.users.auth.userId;
 export const getUsersLoaded = () => (state) => state.users.dataLoaded;
 export const getIsLoggedIn = () => (state) => state.users.isLoggedIn;
