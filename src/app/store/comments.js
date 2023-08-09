@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import commentsService from "../services/comment.service";
+import { nanoid } from "nanoid";
 
 const commentsSlice = createSlice({
   name: "comments",
@@ -19,17 +20,44 @@ const commentsSlice = createSlice({
     requestFailed: (state, action) => {
       state.error = action.payload;
       state.isLoading = false;
+    },
+    create: (state, action) => {
+      state.entities = [...state.entities, action.payload];
+      state.isLoading = false;
+    },
+    remove: (state, action) => {
+      state.entities = state.entities.filter((c) => c._id !== action.payload);
+      state.isLoading = false;
     }
   }
 });
 const { actions, reducer: commentsReducer } = commentsSlice;
-const { recived, requested, requestFailed } = actions;
+const { recived, requested, requestFailed, create, remove } = actions;
 
 export const loadCommentsList = (userId) => async (dispatch) => {
   dispatch(requested());
   try {
     const { content } = await commentsService.getAll(userId);
     dispatch(recived(content));
+  } catch (error) {
+    dispatch(requestFailed(error));
+  }
+};
+export const createComment = (data) => async (dispatch) => {
+  data = { ...data, _id: nanoid(), created_at: Date.now() };
+  dispatch(requested());
+  try {
+    const { content } = await commentsService.create(data);
+    dispatch(create(content));
+  } catch (error) {
+    dispatch(requestFailed(error));
+  }
+};
+export const removeComment = (id) => async (dispatch) => {
+  dispatch(requested());
+  try {
+    const { content } = await commentsService.delete(id);
+    if (content === null) dispatch(remove(id));
   } catch (error) {
     dispatch(requestFailed(error));
   }
